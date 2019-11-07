@@ -347,17 +347,17 @@ describe(`Get example value for type inference`, () => {
       typeConflictReporter,
     })
     expect(example).toMatchInlineSnapshot(`
-Object {
-  "bar": Object {
-    "key1": 2,
-    "key2": "string2",
-  },
-  "foo": Object {
-    "key1": 1,
-    "key2": "string",
-  },
-}
-`)
+      Object {
+        "bar": Object {
+          "key1": 2,
+          "key2": "string2",
+        },
+        "foo": Object {
+          "key1": 1,
+          "key2": "string",
+        },
+      }
+    `)
   })
 
   describe(`handles mix of date strings and date objects`, () => {
@@ -435,10 +435,10 @@ Object {
         typeConflictReporter,
       })
       expect(example.dates).toMatchInlineSnapshot(`
-Array [
-  "1978-09-26",
-]
-`)
+        Array [
+          "1978-09-26",
+        ]
+      `)
 
       example = getExampleValueWithoutConflicts({
         nodes: [
@@ -449,10 +449,10 @@ Array [
         typeConflictReporter,
       })
       expect(example.dates).toMatchInlineSnapshot(`
-Array [
-  "1978-09-26",
-]
-`)
+        Array [
+          "1978-09-26",
+        ]
+      `)
 
       example = getExampleValueWithoutConflicts({
         nodes: [
@@ -463,10 +463,10 @@ Array [
         typeConflictReporter,
       })
       expect(example.dates).toMatchInlineSnapshot(`
-Array [
-  "1978-09-26",
-]
-`)
+        Array [
+          "1978-09-26",
+        ]
+      `)
     })
 
     it(`infers arrays of mixed date objects and non-date strings as strings`, () => {
@@ -515,10 +515,10 @@ Array [
         typeConflictReporter,
       })
       expect(example.dates).toMatchInlineSnapshot(`
-Array [
-  "1978-09-26",
-]
-`)
+        Array [
+          "1978-09-26",
+        ]
+      `)
 
       example = getExampleValueWithoutConflicts({
         nodes: [
@@ -533,10 +533,10 @@ Array [
         typeConflictReporter,
       })
       expect(example.dates).toMatchInlineSnapshot(`
-Array [
-  "1978-09-26",
-]
-`)
+        Array [
+          "1978-09-26",
+        ]
+      `)
 
       example = getExampleValueWithoutConflicts({
         nodes: [
@@ -551,10 +551,10 @@ Array [
         typeConflictReporter,
       })
       expect(example.dates).toMatchInlineSnapshot(`
-Array [
-  "1978-09-26",
-]
-`)
+        Array [
+          "1978-09-26",
+        ]
+      `)
     })
 
     it(`infers arrays of mixed date objects and non-date strings as strings`, () => {
@@ -603,10 +603,10 @@ Array [
         typeConflictReporter,
       })
       expect(example.dates).toMatchInlineSnapshot(`
-Array [
-  "1978-09-26",
-]
-`)
+        Array [
+          "1978-09-26",
+        ]
+      `)
     })
 
     it(`infers variadic arrays of mix of dates and non-date strings as string`, () => {
@@ -821,6 +821,80 @@ describe(`Type conflicts`, () => {
     })
 
     expect(conflicts).toMatchSnapshot()
+  })
+
+  it(`reports mixed scalars and objects`, () => {
+    const nodes = [
+      { id: `1`, numeric: 1, string: `str`, boolean: true },
+      {
+        id: `2`,
+        numeric: { value: 1 },
+        string: { value: `str` },
+        boolean: { value: true },
+      },
+    ]
+
+    const conflicts = getExampleValueConflicts({
+      nodes,
+      typeName: `Conflict_7`,
+    })
+
+    expect(conflicts).toMatchSnapshot()
+  })
+
+  it(`reports mixed scalars and arrays`, () => {
+    const nodes = [
+      { id: `1`, numeric: 1, string: `str`, mixed: true },
+      {
+        id: `2`,
+        numeric: [1],
+        string: [`str`],
+        mixed: [1],
+      },
+    ]
+
+    const conflicts = getExampleValueConflicts({
+      nodes,
+      typeName: `Conflict_8`,
+    })
+
+    expect(conflicts).toMatchSnapshot()
+  })
+
+  it(`doesn't report conflicts with null`, () => {
+    const nodes = [
+      { id: `1`, scalar: 1, obj: { value: 1 }, arr: [1] },
+      { id: `2`, scalar: null, obj: null, arr: null },
+    ]
+    const conflicts = getExampleValueConflicts({
+      nodes,
+      typeName: `Conflict_9`,
+    })
+    expect(conflicts).toEqual([])
+  })
+
+  it(`doesn't report conflicts with empty arrays`, () => {
+    const nodes = [
+      { id: `1`, scalar: 1, obj: { value: 1 }, arr: [1] },
+      { id: `2`, scalar: [], obj: [], arr: [] },
+    ]
+    const conflicts = getExampleValueConflicts({
+      nodes,
+      typeName: `Conflict_10`,
+    })
+    expect(conflicts).toEqual([])
+  })
+
+  it(`doesn't report conflicts with empty objects`, () => {
+    const nodes = [
+      { id: `1`, scalar: 1, obj: { value: 1 }, arr: [1] },
+      { id: `2`, scalar: {}, obj: {}, arr: {} },
+    ]
+    const conflicts = getExampleValueConflicts({
+      nodes,
+      typeName: `Conflict_10`,
+    })
+    expect(conflicts).toEqual([])
   })
 
   // We removed this warning to not confuse people
