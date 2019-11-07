@@ -360,19 +360,29 @@ const getSimpleFieldConfig = ({
           // "addDefaultResolvers: true" only makes sense for
           // pre-existing types.
           if (!config.shouldAddFields) return null
-          fieldTypeComposer = ObjectTypeComposer.create(
-            createTypeName(selector),
-            schemaComposer
-          )
-          fieldTypeComposer.setExtension(`createdFrom`, `inference`)
-          fieldTypeComposer.setExtension(
-            `plugin`,
-            typeComposer.getExtension(`plugin`)
-          )
-          addDerivedType({
-            typeComposer,
-            derivedTypeName: fieldTypeComposer.getTypeName(),
-          })
+
+          const typeName = createTypeName(selector)
+
+          // Type for this nested field could have been defined explicitly via schema customization
+          if (!schemaComposer.has(typeName)) {
+            fieldTypeComposer = ObjectTypeComposer.create(
+              createTypeName(selector),
+              schemaComposer
+            )
+            fieldTypeComposer.setExtension(`createdFrom`, `inference`)
+            fieldTypeComposer.setExtension(
+              `plugin`,
+              typeComposer.getExtension(`plugin`)
+            )
+          } else {
+            fieldTypeComposer = schemaComposer.getOTC(typeName)
+          }
+          if (fieldTypeComposer.getExtension(`createdFrom`) === `inference`) {
+            addDerivedType({
+              typeComposer,
+              derivedTypeName: fieldTypeComposer.getTypeName(),
+            })
+          }
         }
 
         // Inference config options are either explicitly defined on a type
