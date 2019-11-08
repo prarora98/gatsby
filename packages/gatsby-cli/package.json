@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@babel/code-frame": "^7.5.5",
-    "@babel/runtime": "^7.6.3",
+    "@babel/runtime": "^7.7.2",
     "@hapi/joi": "^15.1.1",
     "better-opn": "^0.1.4",
     "bluebird": "^3.7.1",
@@ -51,8 +51,8 @@
     "yurnalist": "^1.1.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.6.4",
-    "@babel/core": "^7.6.4",
+    "@babel/cli": "^7.7.0",
+    "@babel/core": "^7.7.2",
     "babel-preset-gatsby-package": "^0.2.9",
     "cross-env": "^5.2.1"
   },
